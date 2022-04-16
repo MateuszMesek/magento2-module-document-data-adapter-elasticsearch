@@ -4,8 +4,8 @@ namespace MateuszMesek\DocumentDataAdapterElasticsearch;
 
 use Magento\Elasticsearch\Model\Indexer\IndexerHandler;
 use Magento\Framework\Search\Request\DimensionFactory;
-use MateuszMesek\DocumentDataIndexApi\DimensionResolverInterface;
-use MateuszMesek\DocumentDataIndexApi\SaveHandlerInterface;
+use MateuszMesek\DocumentDataIndexIndexerApi\DimensionResolverInterface;
+use MateuszMesek\DocumentDataIndexIndexerApi\SaveHandlerInterface;
 use Traversable;
 
 class SaveHandler implements SaveHandlerInterface
