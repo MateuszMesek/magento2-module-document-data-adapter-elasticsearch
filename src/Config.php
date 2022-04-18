@@ -8,8 +8,9 @@ class Config
 {
     public const DEPLOYMENT_CONFIG_HOSTNAME = 'document_data/elasticsearch/hostname';
     public const DEPLOYMENT_CONFIG_PORT = 'document_data/elasticsearch/port';
-    public const DEPLOYMENT_CONFIG_INDEX = 'document_data/elasticsearch/index';
+    public const DEPLOYMENT_CONFIG_INDEX_NAMESPACE = 'document_data/elasticsearch/index_namespace';
     public const DEPLOYMENT_CONFIG_INDEX_PATTERN = 'document_data/elasticsearch/index_pattern';
+    public const DEPLOYMENT_CONFIG_INDEX_TYPE = 'document_data/elasticsearch/index_type';
     public const DEPLOYMENT_CONFIG_ENABLE_AUTH = 'document_data/elasticsearch/enable_auth';
     public const DEPLOYMENT_CONFIG_USERNAME = 'document_data/elasticsearch/username';
     public const DEPLOYMENT_CONFIG_PASSWORD = 'document_data/elasticsearch/password';
@@ -29,8 +30,9 @@ class Config
         return array_filter([
             'hostname' => $this->deploymentConfig->get(self::DEPLOYMENT_CONFIG_HOSTNAME),
             'port' => $this->deploymentConfig->get(self::DEPLOYMENT_CONFIG_PORT),
-            'index' => $this->deploymentConfig->get(self::DEPLOYMENT_CONFIG_INDEX),
+            'index_namespace' => $this->deploymentConfig->get(self::DEPLOYMENT_CONFIG_INDEX_NAMESPACE),
             'index_pattern' => $this->deploymentConfig->get(self::DEPLOYMENT_CONFIG_INDEX_PATTERN),
+            'index_type' => $this->deploymentConfig->get(self::DEPLOYMENT_CONFIG_INDEX_TYPE),
             'enableAuth' => $this->deploymentConfig->get(self::DEPLOYMENT_CONFIG_ENABLE_AUTH),
             'username' => $this->deploymentConfig->get(self::DEPLOYMENT_CONFIG_USERNAME),
             'password' => $this->deploymentConfig->get(self::DEPLOYMENT_CONFIG_PASSWORD),

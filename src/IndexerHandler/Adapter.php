@@ -8,7 +8,7 @@ class Adapter extends BaseAdapter
 {
     public function addDocs(array $documents, $storeId, $mappedIndexerId)
     {
-        #$this->checkIndex($storeId, $mappedIndexerId, true);
+        $this->checkIndex($storeId, $mappedIndexerId, true);
 
         return parent::addDocs($documents, $storeId, $mappedIndexerId);
     }

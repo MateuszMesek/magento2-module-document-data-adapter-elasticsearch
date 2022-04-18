@@ -31,6 +31,12 @@ class IndexerHandlerFactory
     public function create(string $documentName): IndexerHandler
     {
         $options = $this->config->getClientOptions();
+        $clientConfig = $this->objectManager->create(
+            ClientConfig::class,
+            [
+                'options' => $options
+            ]
+        );
 
         return $this->objectManager->create(
             IndexerHandler::class,
@@ -44,11 +50,12 @@ class IndexerHandlerFactory
                                 'documentName' => $documentName
                             ]
                         ),
-                        'clientConfig' => $this->objectManager->get(ClientConfig::class),
+                        'clientConfig' => $clientConfig,
                         'indexBuilder' => $this->objectManager->get(Adapter\Index\Builder::class),
                         'indexNameResolver' => $this->objectManager->create(
                             IndexNameResolver::class,
                             [
+                                'clientConfig' => $clientConfig,
                                 'options' => $options
                             ]
                         ),

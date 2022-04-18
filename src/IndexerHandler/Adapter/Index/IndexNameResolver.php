@@ -24,7 +24,7 @@ class IndexNameResolver extends BaseIndexNameResolver
     )
     {
         $this->storeManager = $storeManager;
-        $this->indexNamespace = $options['index'] ?: null;
+        $this->indexNamespace = $options['index_namespace'] ?: null;
         $this->indexPattern = $options['index_pattern'] ?: null;
 
         parent::__construct(
@@ -40,11 +40,15 @@ class IndexNameResolver extends BaseIndexNameResolver
      */
     protected function getIndexNamespace()
     {
-        if (null !== $this->indexNamespace) {
-            return $this->indexNamespace;
-        }
+        return $this->indexNamespace ?? parent::getIndexNamespace();
+    }
 
-        return parent::getIndexNamespace();
+    /**
+     * @inheritdoc
+     */
+    public function getIndexNameForAlias($storeId, $mappedIndexerId)
+    {
+        return $this->buildIndexName($storeId, $mappedIndexerId) ?? parent::getIndexNameForAlias($storeId, $mappedIndexerId);
     }
 
     /**
@@ -52,8 +56,19 @@ class IndexNameResolver extends BaseIndexNameResolver
      */
     public function getIndexPattern($storeId, $mappedIndexerId)
     {
-        if (null === $this->indexPattern) {
+        $indexName = $this->buildIndexName($storeId, $mappedIndexerId);
+
+        if (null === $indexName) {
             return parent::getIndexPattern($storeId, $mappedIndexerId);
+        }
+
+        return $indexName.'_v';
+    }
+
+    private function buildIndexName($storeId, $indexId): ?string
+    {
+        if (null === $this->indexPattern) {
+            return null;
         }
 
         return strtr(
@@ -62,8 +77,29 @@ class IndexNameResolver extends BaseIndexNameResolver
                 '{namespace}' => $this->getIndexNamespace(),
                 '{store_id}' => $storeId,
                 '{store_code}' => $this->storeManager->getStore($storeId)->getCode(),
-                '{index_id}' => $mappedIndexerId
+                '{index_id}' => $indexId
             ]
         );
+    }
+
+    public function getIndexFromAlias($storeId, $mappedIndexerId)
+    {
+        $storeIndex = '';
+        $indexPattern = $this->getIndexPattern($storeId, $mappedIndexerId);
+        $indexName = $this->getIndexNameForAlias($storeId, $mappedIndexerId);
+
+        if ($this->client->existsAlias($indexName)) {
+            $alias = $this->client->getAlias($indexName);
+            $indices = array_keys($alias);
+
+            foreach ($indices as $index) {
+                if (strpos($index, (string) $indexPattern) === 0) {
+                    $storeIndex = $index;
+                    break;
+                }
+            }
+        }
+
+        return $storeIndex;
     }
 }

@@ -14,8 +14,9 @@ class ConfigOptionsList implements ConfigOptionsListInterface
 {
     private const INPUT_HOSTNAME = 'document-data-elasticsearch-hostname';
     private const INPUT_PORT = 'document-data-elasticsearch-port';
-    private const INPUT_INDEX = 'document-data-elasticsearch-index';
+    private const INPUT_INDEX_NAMESPACE = 'document-data-elasticsearch-index-namespace';
     private const INPUT_INDEX_PATTERN = 'document-data-elasticsearch-index-pattern';
+    private const INPUT_INDEX_TYPE = 'document_data-elasticsearch-index-type';
     private const INPUT_ENABLED_AUTH = 'document-data-elasticsearch-enable-auth';
     private const INPUT_USERNAME = 'document-data-elasticsearch-username';
     private const INPUT_PASSWORD = 'document-data-elasticsearch-password';
@@ -35,14 +36,19 @@ class ConfigOptionsList implements ConfigOptionsListInterface
                 Config::DEPLOYMENT_CONFIG_PORT
             ),
             new TextConfigOption(
-                self::INPUT_INDEX,
+                self::INPUT_INDEX_NAMESPACE,
                 TextConfigOption::FRONTEND_WIZARD_TEXT,
-                Config::DEPLOYMENT_CONFIG_INDEX
+                Config::DEPLOYMENT_CONFIG_INDEX_NAMESPACE
             ),
             new TextConfigOption(
                 self::INPUT_INDEX_PATTERN,
                 TextConfigOption::FRONTEND_WIZARD_TEXT,
                 Config::DEPLOYMENT_CONFIG_INDEX_PATTERN
+            ),
+            new TextConfigOption(
+                self::INPUT_INDEX_TYPE,
+                TextConfigOption::FRONTEND_WIZARD_TEXT,
+                Config::DEPLOYMENT_CONFIG_INDEX_TYPE
             ),
             new FlagConfigOption(
                 self::INPUT_ENABLED_AUTH,
@@ -78,12 +84,16 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             $configData->set(Config::DEPLOYMENT_CONFIG_PORT, (int)$options[self::INPUT_PORT]);
         }
 
-        if (isset($options[self::INPUT_INDEX])) {
-            $configData->set(Config::DEPLOYMENT_CONFIG_INDEX, $options[self::INPUT_INDEX]);
+        if (isset($options[self::INPUT_INDEX_NAMESPACE])) {
+            $configData->set(Config::DEPLOYMENT_CONFIG_INDEX_NAMESPACE, $options[self::INPUT_INDEX_NAMESPACE]);
         }
 
         if (isset($options[self::INPUT_INDEX_PATTERN])) {
             $configData->set(Config::DEPLOYMENT_CONFIG_INDEX_PATTERN, $options[self::INPUT_INDEX_PATTERN]);
+        }
+
+        if (isset($options[self::INPUT_INDEX_TYPE])) {
+            $configData->set(Config::DEPLOYMENT_CONFIG_INDEX_TYPE, $options[self::INPUT_INDEX_TYPE]);
         }
 
         if (isset($options[self::INPUT_ENABLED_AUTH])) {

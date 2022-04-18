@@ -6,8 +6,6 @@ use Magento\Elasticsearch\Model\Adapter\Index\BuilderInterface;
 
 class Builder implements BuilderInterface
 {
-    private ?int $storeId;
-
     public function build()
     {
         return [];
@@ -15,6 +13,6 @@ class Builder implements BuilderInterface
 
     public function setStoreId($storeId)
     {
-        $this->storeId = (int)$storeId;
+
     }
 }

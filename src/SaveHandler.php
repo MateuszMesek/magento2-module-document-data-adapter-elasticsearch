@@ -25,12 +25,12 @@ class SaveHandler implements SaveHandlerInterface
         $this->dimensionFactory = $dimensionFactory;
     }
 
-    public function isAvailable($dimensions = []): bool
+    public function isAvailable(array $dimensions = []): bool
     {
         return $this->getIndexerHandler($dimensions)->isAvailable($dimensions);
     }
 
-    public function saveIndex($dimensions, Traversable $documents): void
+    public function saveIndex(array $dimensions, Traversable $documents): void
     {
         $this->getIndexerHandler($dimensions)->saveIndex(
             $this->convertDimensions($dimensions),
@@ -38,7 +38,7 @@ class SaveHandler implements SaveHandlerInterface
         );
     }
 
-    public function deleteIndex($dimensions, Traversable $documents): void
+    public function deleteIndex(array $dimensions, Traversable $documents): void
     {
         $this->getIndexerHandler($dimensions)->deleteIndex(
             $this->convertDimensions($dimensions),
