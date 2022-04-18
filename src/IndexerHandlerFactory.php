@@ -37,6 +37,13 @@ class IndexerHandlerFactory
                 'options' => $options
             ]
         );
+        $indexNameResolver = $this->objectManager->create(
+            IndexNameResolver::class,
+            [
+                'clientConfig' => $clientConfig,
+                'options' => $options
+            ]
+        );
 
         return $this->objectManager->create(
             IndexerHandler::class,
@@ -52,13 +59,7 @@ class IndexerHandlerFactory
                         ),
                         'clientConfig' => $clientConfig,
                         'indexBuilder' => $this->objectManager->get(Adapter\Index\Builder::class),
-                        'indexNameResolver' => $this->objectManager->create(
-                            IndexNameResolver::class,
-                            [
-                                'clientConfig' => $clientConfig,
-                                'options' => $options
-                            ]
-                        ),
+                        'indexNameResolver' => $indexNameResolver,
                         'batchDocumentDataMapper' => $this->objectManager->create(
                             BatchDataMapper::class,
                             [
@@ -68,6 +69,7 @@ class IndexerHandlerFactory
                         'options' => $options
                     ]
                 ),
+                'indexNameResolver' => $indexNameResolver,
                 'data' => [
                     'indexer_id' => $documentName
                 ]
