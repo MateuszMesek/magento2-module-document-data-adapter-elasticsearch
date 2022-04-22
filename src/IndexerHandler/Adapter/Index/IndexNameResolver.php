@@ -24,8 +24,8 @@ class IndexNameResolver extends BaseIndexNameResolver
     )
     {
         $this->storeManager = $storeManager;
-        $this->indexNamespace = $options['index_namespace'] ?: null;
-        $this->indexPattern = $options['index_pattern'] ?: null;
+        $this->indexNamespace = $options['index_namespace'] ?? null;
+        $this->indexPattern = $options['index_pattern'] ?? null;
 
         parent::__construct(
             $connectionManager,
