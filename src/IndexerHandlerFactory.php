@@ -3,6 +3,7 @@
 namespace MateuszMesek\DocumentDataAdapterElasticsearch;
 
 use Magento\Elasticsearch\Model\Indexer\IndexerHandler;
+use Magento\Elasticsearch\Model\Indexer\IndexStructure;
 use Magento\Framework\ObjectManagerInterface;
 use MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter;
 use MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\Index\IndexNameResolver;
@@ -45,30 +46,38 @@ class IndexerHandlerFactory
             ]
         );
 
+        $adapter = $this->objectManager->create(
+            Adapter::class,
+            [
+                'fieldMapper' => $this->objectManager->create(
+                    Adapter\FieldMapper::class,
+                    [
+                        'documentName' => $documentName
+                    ]
+                ),
+                'clientConfig' => $clientConfig,
+                'indexBuilder' => $this->objectManager->get(Adapter\Index\Builder::class),
+                'indexNameResolver' => $indexNameResolver,
+                'batchDocumentDataMapper' => $this->objectManager->create(
+                    BatchDataMapper::class,
+                    [
+                        'documentName' => $documentName
+                    ]
+                ),
+                'options' => $options
+            ]
+        );
+
         return $this->objectManager->create(
             IndexerHandler::class,
             [
-                'adapter' => $this->objectManager->create(
-                    Adapter::class,
+                'indexStructure' => $this->objectManager->create(
+                    IndexStructure::class,
                     [
-                        'fieldMapper' => $this->objectManager->create(
-                            Adapter\FieldMapper::class,
-                            [
-                                'documentName' => $documentName
-                            ]
-                        ),
-                        'clientConfig' => $clientConfig,
-                        'indexBuilder' => $this->objectManager->get(Adapter\Index\Builder::class),
-                        'indexNameResolver' => $indexNameResolver,
-                        'batchDocumentDataMapper' => $this->objectManager->create(
-                            BatchDataMapper::class,
-                            [
-                                'documentName' => $documentName
-                            ]
-                        ),
-                        'options' => $options
+                        'adapter' => $adapter
                     ]
                 ),
+                'adapter' => $adapter,
                 'indexNameResolver' => $indexNameResolver,
                 'data' => [
                     'indexer_id' => $documentName

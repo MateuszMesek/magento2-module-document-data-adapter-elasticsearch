@@ -34,7 +34,7 @@ class SaveHandler implements SaveHandlerInterface
     {
         $this->getIndexerHandler($dimensions)->saveIndex(
             $this->convertDimensions($dimensions),
-            $documents
+            $this->getDocumentsData($documents)
         );
     }
 
@@ -42,7 +42,7 @@ class SaveHandler implements SaveHandlerInterface
     {
         $this->getIndexerHandler($dimensions)->deleteIndex(
             $this->convertDimensions($dimensions),
-            $documents
+            $this->getDocumentsId($documents)
         );
     }
 
@@ -65,5 +65,27 @@ class SaveHandler implements SaveHandlerInterface
         }
 
         return $output;
+    }
+
+    /**
+     * @param \Traversable|\MateuszMesek\DocumentDataApi\Data\DocumentDataInterface[] $documents
+     * @return \Traversable
+     */
+    private function getDocumentsData(Traversable $documents): Traversable
+    {
+        foreach ($documents as $documentId => $documentData) {
+            yield $documentId => $documentData ? $documentData->getData() : null;
+        }
+    }
+
+    /**
+     * @param \Traversable $documents
+     * @return \Traversable
+     */
+    private function getDocumentsId(Traversable $documents): Traversable
+    {
+        foreach ($documents as $documentId => $documentData) {
+            yield $documentId;
+        }
     }
 }
