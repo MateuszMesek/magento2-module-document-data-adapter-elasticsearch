@@ -12,6 +12,11 @@
             </argument>
         </arguments>
     </type>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter">
+        <arguments>
+            <argument name="indexBuilder" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\Index\Builder</argument>
+        </arguments>
+    </type>
     <type name="MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\BatchDataMapper\DefaultDataMapper">
         <arguments>
             <argument name="serializer" xsi:type="object">Elasticsearch\Serializers\SmartSerializer</argument>

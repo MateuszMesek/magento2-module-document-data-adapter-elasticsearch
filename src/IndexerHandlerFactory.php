@@ -6,6 +6,7 @@ use Magento\Elasticsearch\Model\Indexer\IndexerHandler;
 use Magento\Elasticsearch\Model\Indexer\IndexStructure;
 use Magento\Framework\ObjectManagerInterface;
 use MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter;
+use MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\FieldMapper;
 use MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\Index\IndexNameResolver;
 use MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Config as ClientConfig;
 use MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\BatchDataMapper;
@@ -50,13 +51,12 @@ class IndexerHandlerFactory
             Adapter::class,
             [
                 'fieldMapper' => $this->objectManager->create(
-                    Adapter\FieldMapper::class,
+                    FieldMapper::class,
                     [
                         'documentName' => $documentName
                     ]
                 ),
                 'clientConfig' => $clientConfig,
-                'indexBuilder' => $this->objectManager->get(Adapter\Index\Builder::class),
                 'indexNameResolver' => $indexNameResolver,
                 'batchDocumentDataMapper' => $this->objectManager->create(
                     BatchDataMapper::class,
