@@ -3,6 +3,7 @@
 namespace MateuszMesek\DocumentDataAdapterElasticsearch;
 
 use Magento\Elasticsearch\Model\Indexer\IndexerHandler;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Search\Request\DimensionFactory;
 use MateuszMesek\DocumentDataIndexIndexerApi\DimensionResolverInterface;
 use MateuszMesek\DocumentDataIndexIndexerApi\SaveHandlerInterface;
@@ -27,7 +28,11 @@ class SaveHandler implements SaveHandlerInterface
 
     public function isAvailable(array $dimensions = []): bool
     {
-        return $this->getIndexerHandler($dimensions)->isAvailable($dimensions);
+        try {
+            return $this->getIndexerHandler($dimensions)->isAvailable($dimensions);
+        } catch (LocalizedException $exception) {
+            return false;
+        }
     }
 
     public function saveIndex(array $dimensions, Traversable $documents): void
