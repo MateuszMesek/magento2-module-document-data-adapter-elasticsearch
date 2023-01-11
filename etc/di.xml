@@ -1,32 +1,149 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\SaveHandler">
+    <!-- config -->
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config">
         <arguments>
-            <argument name="documentNameResolver" xsi:type="object">MateuszMesek\DocumentDataIndexIndexer\DimensionResolver\DocumentNameResolver</argument>
+            <argument name="data" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Data</argument>
         </arguments>
     </type>
-    <type name="Magento\Elasticsearch\Model\Adapter\BatchDataMapper\DataMapperFactory">
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Data" type="Magento\Framework\Config\Data">
         <arguments>
-            <argument name="dataMappers" xsi:type="array">
-                <item name="document_data" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\BatchDataMapper\DefaultDataMapper</item>
+            <argument name="reader" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Reader</argument>
+            <argument name="cacheId" xsi:type="string">document_data_elasticsearch_config_cache</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Reader" type="Magento\Framework\Config\Reader\Filesystem">
+        <arguments>
+            <argument name="converter" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Converter</argument>
+            <argument name="schemaLocator" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\SchemaLocator</argument>
+            <argument name="fileName" xsi:type="string">document_data_elasticsearch.xml</argument>
+            <argument name="idAttributes" xsi:type="array">
+                <item name="/config/document" xsi:type="string">name</item>
+                <item name="/config/document/node" xsi:type="string">path</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Converter">
+        <arguments>
+            <argument name="documentProcessor" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Converter\Document</argument>
+        </arguments>
+    </type>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Converter\Document">
+        <arguments>
+            <argument name="nodeProcessor" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Converter\Node</argument>
+        </arguments>
+    </type>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\SchemaLocator" type="Magento\Framework\Config\GenericSchemaLocator">
+        <arguments>
+            <argument name="moduleName" xsi:type="string">MateuszMesek_DocumentDataAdapterElasticsearch</argument>
+            <argument name="schema" xsi:type="string">document_data_elasticsearch.xsd</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\IndexNameResolver" type="MateuszMesek\DocumentDataIndexIndexer\Model\IndexNameResolver\ConfigPattern">
+        <arguments>
+            <argument name="config" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config</argument>
+        </arguments>
+    </virtualType>
+    <!-- default configuration -->
+    <preference for="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder\BuilderInterface" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder\Composite"/>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder\Composite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="mapper" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder\Mapper</item>
             </argument>
         </arguments>
     </type>
-    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter">
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder\Mapper">
         <arguments>
-            <argument name="indexBuilder" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\Index\Builder</argument>
+            <argument name="documentNameResolver" xsi:type="object">MateuszMesek\DocumentDataIndexIndexer\Model\DimensionResolver\DocumentNameResolver</argument>
         </arguments>
     </type>
-    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\BatchDataMapper\DefaultDataMapper">
+    <preference for="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DifferInterface" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Composite"/>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Composite">
         <arguments>
-            <argument name="serializer" xsi:type="object">Elasticsearch\Serializers\SmartSerializer</argument>
-        </arguments>
-    </type>
-    <type name="Magento\Elasticsearch\Model\Adapter\FieldMapper\FieldMapperResolver">
-        <arguments>
-            <argument name="fieldMappers" xsi:type="array">
-                <item name="document_data" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\IndexerHandler\Adapter\FieldMapper\DefaultFieldMapper</item>
+            <argument name="differs" xsi:type="array">
+                <item name="static-settings" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\StaticSettings</item>
+                <item name="dynamic-settings" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DynamicSettings</item>
+                <item name="mapper" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Mapper</item>
             </argument>
         </arguments>
     </type>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Mapper">
+        <arguments>
+            <argument name="documentNameResolver" xsi:type="object">MateuszMesek\DocumentDataIndexIndexer\Model\DimensionResolver\DocumentNameResolver</argument>
+        </arguments>
+    </type>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\StaticSettings" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Settings">
+        <arguments>
+            <argument name="result" xsi:type="const">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DifferInterface::NEW</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DynamicSettings" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Settings">
+        <arguments>
+            <argument name="result" xsi:type="const">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DifferInterface::UPDATE</argument>
+            <argument name="paths" xsi:type="array">
+                <item name="index/mapping/total_fields/limit" xsi:type="boolean">true</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\IdsResolver">
+        <arguments>
+            <argument name="readHandler" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\ReadHandler</argument>
+        </arguments>
+    </type>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\IndexStructureBuilder">
+        <arguments>
+            <argument name="indexNameResolver" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\IndexNameResolver</argument>
+        </arguments>
+    </type>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\ReadHandler">
+        <arguments>
+            <argument name="indexNameResolver" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\IndexNameResolver</argument>
+        </arguments>
+    </type>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\SaveHandler">
+        <arguments>
+            <argument name="indexNameResolver" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\IndexNameResolver</argument>
+            <argument name="documentNameResolver" xsi:type="object">MateuszMesek\DocumentDataIndexIndexer\Model\DimensionResolver\DocumentNameResolver</argument>
+        </arguments>
+    </type>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\DocumentNodesResolver\ReflectionResolver">
+        <arguments>
+            <argument name="fieldMapperByKey" xsi:type="array">
+                <item name="created_at" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Date</item>
+                <item name="updated_at" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Date</item>
+            </argument>
+            <argument name="fieldMapperByReturnType" xsi:type="array">
+                <item name="bool" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Boolean</item>
+                <item name="int" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Integer</item>
+                <item name="string" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Text</item>
+                <item name="float" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Float</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Boolean" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Type">
+        <arguments>
+            <argument name="type" xsi:type="string">boolean</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Date" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Type">
+        <arguments>
+            <argument name="type" xsi:type="string">date</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Integer" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Type">
+        <arguments>
+            <argument name="type" xsi:type="string">integer</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Float" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Type">
+        <arguments>
+            <argument name="type" xsi:type="string">float</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Text" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Type">
+        <arguments>
+            <argument name="type" xsi:type="string">text</argument>
+        </arguments>
+    </virtualType>
 </config>

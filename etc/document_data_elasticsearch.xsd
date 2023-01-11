@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="urn:magento:framework:Data/etc/argument/types.xsd"/>
+    <xs:redefine schemaLocation="urn:magento:module:MateuszMesek_DocumentData:etc/types.xsd">
+        <xs:complexType name="documentType">
+            <xs:complexContent>
+                <xs:extension base="documentType">
+                    <xs:sequence>
+                        <xs:element name="node" type="documentNodeType" minOccurs="0" maxOccurs="unbounded">
+                            <xs:unique name="uniqueDocumentNodePath">
+                                <xs:annotation>
+                                    <xs:documentation>Document node path must be unique.</xs:documentation>
+                                </xs:annotation>
+                                <xs:selector xpath=".//node"/>
+                                <xs:field xpath="@path"/>
+                            </xs:unique>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+
+        <xs:complexType name="documentNodeType">
+            <xs:complexContent>
+                <xs:extension base="documentNodeType">
+                    <xs:sequence>
+                        <xs:element name="fieldMapper" type="object" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="dataMapper" type="object" minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:redefine>
+
+    <xs:element name="config" type="configType">
+        <xs:unique name="uniqueDocumentType">
+            <xs:annotation>
+                <xs:documentation>Document must be unique.</xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="document"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
+    </xs:element>
+</xs:schema>

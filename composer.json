@@ -3,9 +3,12 @@
     "description": "N/A",
     "type": "magento2-module",
     "require": {
+        "php": ">=8.1",
+        "ext-json": "*",
+        "enqueue/dsn": "^0.10",
         "magento/framework": "*",
         "magento/module-elasticsearch": "*",
-        "mateuszmesek-magento2/module-document-data-index-indexer": "*"
+        "mateuszmesek-magento2/module-document-data-index-indexer": "^1.0"
     },
     "license": [
         "MIT"
@@ -15,7 +18,8 @@
             "registration.php"
         ],
         "psr-4": {
-            "MateuszMesek\\DocumentDataAdapterElasticsearch\\": "src"
+            "MateuszMesek\\DocumentDataAdapterElasticsearch\\": ""
         }
-    }
+    },
+    "version": "0.2.0"
 }
