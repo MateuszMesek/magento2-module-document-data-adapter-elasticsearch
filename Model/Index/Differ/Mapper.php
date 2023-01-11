@@ -11,7 +11,7 @@ class Mapper implements DifferInterface
     private const META_FIELDS = 'mappings/_meta/fields';
 
     public function __construct(
-        private readonly ArrayManager $arrayManager,
+        private readonly ArrayManager        $arrayManager,
         private readonly SerializerInterface $serializer
     )
     {
@@ -30,6 +30,8 @@ class Mapper implements DifferInterface
         if ($toRemoveFields) {
             return self::NEW;
         }
+
+        $toUpdateFields = [];
 
         foreach ($newFields as $fieldName) {
             if (!isset($currentMappings[$fieldName])) {
@@ -52,12 +54,12 @@ class Mapper implements DifferInterface
                 return self::NEW;
             }
 
-            return self::UPDATE;
+            $toUpdateFields[] = $fieldName;
         }
 
         $toCreateFields = array_diff_assoc($newFields, $currentFields);
 
-        if (!empty($toCreateFields)) {
+        if (!empty($toCreateFields) || !empty($toUpdateFields)) {
             return self::UPDATE;
         }
 

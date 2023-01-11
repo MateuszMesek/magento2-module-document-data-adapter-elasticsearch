@@ -18,6 +18,7 @@ abstract class AbstractHandler
     {
         $indexName = $this->indexNameResolver->resolve($dimensions);
 
-        return $this->adapter->existsIndex($indexName);
+        return $this->adapter->ping()
+            && $this->adapter->existsIndex($indexName);
     }
 }

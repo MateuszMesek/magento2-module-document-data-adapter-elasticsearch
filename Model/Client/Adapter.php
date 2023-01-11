@@ -5,6 +5,7 @@ namespace MateuszMesek\DocumentDataAdapterElasticsearch\Model\Client;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config;
 use Traversable;
 
@@ -33,6 +34,15 @@ class Adapter
         return $this->client;
     }
 
+    public function ping(): bool
+    {
+        try {
+            return $this->getClient()->ping();
+        } catch (NoNodesAvailableException $exception) {
+            return false;
+        }
+    }
+
     public function getIndexBody(string $indexName): array
     {
         try {
@@ -58,22 +68,20 @@ class Adapter
     {
         $indies = $this->getClient()->indices();
 
-        try {
-            if (!empty($body['settings'])) {
-                $indies->putSettings([
-                    'index' => $indexName,
-                    'body' => $body['settings']
-                ]);
-            }
+        if (!empty($body['settings'])) {
+            unset($body['settings']['index']['analysis']);
 
-            if (!empty($body['mappings'])) {
-                $indies->putMapping([
-                    'index' => $indexName,
-                    'body' => $body['mappings']
-                ]);
-            }
-        } catch (\Throwable $exception) {
-            throw $exception;
+            $indies->putSettings([
+                'index' => $indexName,
+                'body' => $body['settings']
+            ]);
+        }
+
+        if (!empty($body['mappings'])) {
+            $indies->putMapping([
+                'index' => $indexName,
+                'body' => $body['mappings']
+            ]);
         }
     }
 

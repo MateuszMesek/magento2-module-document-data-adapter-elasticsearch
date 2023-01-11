@@ -12,9 +12,9 @@ class IndexStructureBuilder implements IndexStructureBuilderInterface
 {
     public function __construct(
         private readonly IndexNameResolverInterface $indexNameResolver,
-        private readonly BuilderInterface $builder,
-        private readonly DifferInterface $differ,
-        private readonly Adapter $adapter
+        private readonly BuilderInterface           $builder,
+        private readonly DifferInterface            $differ,
+        private readonly Adapter                    $adapter
     )
     {
     }
@@ -22,6 +22,10 @@ class IndexStructureBuilder implements IndexStructureBuilderInterface
     public function build(array $dimensions = []): void
     {
         $indexName = $this->indexNameResolver->resolve($dimensions);
+
+        if (!$this->adapter->ping()) {
+            return;
+        }
 
         $new = $this->builder->build($dimensions);
         $current = $this->adapter->getIndexBody($indexName);
@@ -87,8 +91,8 @@ class IndexStructureBuilder implements IndexStructureBuilderInterface
         }
 
         do {
-            $newIndexName = $aliasName.'_v'.(++$version);
-        } while($this->adapter->existsIndex($newIndexName));
+            $newIndexName = $aliasName . '_v' . (++$version);
+        } while ($this->adapter->existsIndex($newIndexName));
 
         return $newIndexName;
     }
