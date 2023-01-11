@@ -20,6 +20,5 @@
         "psr-4": {
             "MateuszMesek\\DocumentDataAdapterElasticsearch\\": ""
         }
-    },
-    "version": "0.2.0"
+    }
 }
