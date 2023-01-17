@@ -224,30 +224,43 @@ class Adapter
     private function paginateQuery(array $query): Traversable
     {
         $canPaginate = !isset($query['body']['from'], $query['body']['size']);
-        $page = 1;
-        $size = 100;
+        $searchAfter = null;
 
         do {
-            $pageQuery = $this->getPageQuery($query, $page++, $size);
+            $pageQuery = $this->getPageQuery($query, $searchAfter);
 
             $pageResponse = $this->getClient()->search($pageQuery);
 
             yield $pageResponse;
 
             if (empty($pageResponse['hits']['hits'])) {
-                $canPaginate = false;
+                return;
             }
+
+            $lastHit = end($pageResponse['hits']['hits']);
+
+            if (empty($lastHit['sort'])) {
+                return;
+            }
+
+            $searchAfter = $lastHit['sort'];
         } while ($canPaginate);
     }
 
-    private function getPageQuery(array $query, int $page, int $size): array
+    private function getPageQuery(array $query, ?array $searchAfter): array
     {
-        if (empty($query['body']['from'])) {
-            $query['body']['from'] = ($page - 1) * $size;
+        if (null !== $searchAfter) {
+            $query['body']['search_after'] = $searchAfter;
+        }
+
+        if (empty($query['body']['sort'])) {
+            $query['body']['sort'] = [
+                '_id' => 'ASC'
+            ];
         }
 
         if (empty($query['body']['size'])) {
-            $query['body']['size'] = $size;
+            $query['body']['size'] = 100;
         }
 
         return $query;
