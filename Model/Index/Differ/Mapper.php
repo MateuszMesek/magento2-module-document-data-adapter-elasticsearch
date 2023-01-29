@@ -10,6 +10,13 @@ class Mapper implements DifferInterface
     private const MAPPINGS_PATH = 'mappings/properties';
     private const META_FIELDS = 'mappings/_meta/fields';
 
+    private const NEW_KEYS = [
+        'type',
+        'analyzer',
+        'search_analyzer',
+        'search_quote_analyzer'
+    ];
+
     public function __construct(
         private readonly ArrayManager        $arrayManager,
         private readonly SerializerInterface $serializer
@@ -50,7 +57,14 @@ class Mapper implements DifferInterface
                 continue;
             }
 
-            if ($newField['type'] !== $currentField['type']) {
+            foreach (self::NEW_KEYS as $key) {
+                $newValue = $newField[$key] ?? null;
+                $currentValue = $currentField[$key] ?? null;
+
+                if ($newValue === $currentValue) {
+                    continue;
+                }
+
                 return self::NEW;
             }
 
