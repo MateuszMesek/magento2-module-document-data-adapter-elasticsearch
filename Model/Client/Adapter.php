@@ -12,6 +12,7 @@ use Traversable;
 class Adapter
 {
     private const BULK_ACTION_DELETE = 'delete';
+    private const BULK_ACTION_INDEX = 'index';
     private const BULK_ACTION_UPDATE = 'update';
 
     private ?Client $client = null;
@@ -148,7 +149,7 @@ class Adapter
         $bulkUpsertDocuments = $this->getBulkQuery(
             $indexName,
             $documents,
-            self::BULK_ACTION_UPDATE
+            self::BULK_ACTION_INDEX
         );
 
         $this->bulkQuery($bulkUpsertDocuments);
@@ -180,13 +181,19 @@ class Adapter
         foreach ($documents as $id => $document) {
             $query['body'][] = [
                 $action => [
+                    '_index' => $indexName,
                     '_id' => $id,
-                    '_index' => $indexName
                 ]
             ];
 
-            if ($action === self::BULK_ACTION_UPDATE) {
-                $query['body'][] = ['doc' => $document, 'doc_as_upsert' => true];
+            switch ($action) {
+                case self::BULK_ACTION_INDEX:
+                    $query['body'][] = $document;
+                    break;
+
+                case self::BULK_ACTION_UPDATE:
+                    $query['body'][] = ['doc' => $document, 'doc_as_upsert' => true];
+                    break;
             }
         }
 
