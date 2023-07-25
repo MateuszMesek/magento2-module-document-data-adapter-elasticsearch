@@ -3,6 +3,7 @@
 namespace MateuszMesek\DocumentDataAdapterElasticsearch\Model\Command;
 
 use Magento\Framework\Stdlib\ArrayManager;
+use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Command\GetDocumentNodesInterface as ElasticsearchGetDocumentNodesInterface;
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Data\DocumentNodeFactory;
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Data\DocumentNodeInterface;
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\DocumentNodesResolver\ResolverPool;
@@ -11,7 +12,7 @@ use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\Auto;
 use MateuszMesek\DocumentDataApi\Model\Command\GetDocumentNodesInterface;
 use Traversable;
 
-class GetDocumentNodes
+class GetDocumentNodes implements ElasticsearchGetDocumentNodesInterface
 {
     public function __construct(
         private readonly GetDocumentNodesInterface $getDocumentNodes,

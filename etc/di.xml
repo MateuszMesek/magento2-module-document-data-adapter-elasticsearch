@@ -45,6 +45,7 @@
         </arguments>
     </virtualType>
     <!-- default configuration -->
+    <preference for="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Command\GetDocumentNodesInterface" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Command\CachedGetDocumentNodes"/>
     <preference for="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder\BuilderInterface" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder\Composite"/>
     <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder\Composite">
         <arguments>

@@ -2,7 +2,7 @@
 
 namespace MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder;
 
-use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Command\GetDocumentNodes;
+use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Command\GetDocumentNodesInterface;
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\FieldMapper\FieldMapperFactory;
 use MateuszMesek\DocumentDataIndexIndexerApi\Model\DimensionResolverInterface;
 
@@ -10,7 +10,7 @@ class Mapper implements BuilderInterface
 {
     public function __construct(
         private readonly DimensionResolverInterface $documentNameResolver,
-        private readonly GetDocumentNodes           $getDocumentNodes,
+        private readonly GetDocumentNodesInterface  $getDocumentNodes,
         private readonly FieldMapperFactory         $fieldMapperFactory,
         private readonly int                        $defaultMappingFieldsLimit = 1000
     )

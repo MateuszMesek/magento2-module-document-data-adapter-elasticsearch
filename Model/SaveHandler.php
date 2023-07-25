@@ -3,7 +3,7 @@
 namespace MateuszMesek\DocumentDataAdapterElasticsearch\Model;
 
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Client\Adapter;
-use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Command\GetDocumentNodes;
+use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Command\GetDocumentNodesInterface;
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\DataMapper\DataMapperFactory;
 use MateuszMesek\DocumentDataApi\Model\Data\DocumentDataInterface;
 use MateuszMesek\DocumentDataIndexIndexerApi\Model\DimensionResolverInterface;
@@ -17,7 +17,7 @@ class SaveHandler extends AbstractHandler implements SaveHandlerInterface
         IndexNameResolverInterface                  $indexNameResolver,
         Adapter                                     $adapter,
         private readonly DimensionResolverInterface $documentNameResolver,
-        private readonly GetDocumentNodes           $getDocumentNodes,
+        private readonly GetDocumentNodesInterface  $getDocumentNodes,
         private readonly DataMapperFactory          $dataMapperFactory
     )
     {
