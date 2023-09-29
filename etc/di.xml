@@ -26,6 +26,7 @@
     <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Converter">
         <arguments>
             <argument name="documentProcessor" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Converter\Document</argument>
+            <argument name="indexSettingProcessor" xsi:type="object">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Converter\IndexSetting</argument>
         </arguments>
     </type>
     <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config\Converter\Document">
@@ -59,6 +60,19 @@
             <argument name="documentNameResolver" xsi:type="object">MateuszMesek\DocumentDataIndexIndexer\Model\DimensionResolver\DocumentNameResolver</argument>
         </arguments>
     </type>
+    <preference for="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Cleaner\CleanerInterface" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Cleaner\Composite"/>
+    <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Cleaner\Composite">
+        <arguments>
+            <argument name="cleaners" xsi:type="array">
+                <item name="static-settings" xsi:type="string">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Cleaner\StaticSettings</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Cleaner\StaticSettings" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Cleaner\Settings">
+        <arguments>
+            <argument name="type" xsi:type="string">static</argument>
+        </arguments>
+    </virtualType>
     <preference for="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DifferInterface" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Composite"/>
     <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Composite">
         <arguments>
@@ -76,15 +90,14 @@
     </type>
     <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\StaticSettings" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Settings">
         <arguments>
+            <argument name="type" xsi:type="string">static</argument>
             <argument name="result" xsi:type="const">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DifferInterface::NEW</argument>
         </arguments>
     </virtualType>
     <virtualType name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DynamicSettings" type="MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\Settings">
         <arguments>
+            <argument name="type" xsi:type="string">dynamic</argument>
             <argument name="result" xsi:type="const">MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DifferInterface::UPDATE</argument>
-            <argument name="paths" xsi:type="array">
-                <item name="index/mapping/total_fields/limit" xsi:type="boolean">true</item>
-            </argument>
         </arguments>
     </virtualType>
     <type name="MateuszMesek\DocumentDataAdapterElasticsearch\Model\IdsResolver">

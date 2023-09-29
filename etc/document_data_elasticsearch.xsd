@@ -2,6 +2,13 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="urn:magento:framework:Data/etc/argument/types.xsd"/>
     <xs:redefine schemaLocation="urn:magento:module:MateuszMesek_DocumentData:etc/types.xsd">
+        <xs:complexType name="configType">
+            <xs:sequence>
+                <xs:element name="document" type="documentType" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element name="index" type="indexType" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+
         <xs:complexType name="documentType">
             <xs:complexContent>
                 <xs:extension base="documentType">
@@ -41,4 +48,20 @@
             <xs:field xpath="@name"/>
         </xs:unique>
     </xs:element>
+
+    <xs:complexType name="indexType">
+        <xs:sequence>
+            <xs:element name="setting" type="indexSettingsType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="indexSettingsType">
+        <xs:attribute name="path" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="settingsType" use="required"/>
+    </xs:complexType>
+    <xs:simpleType name="settingsType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="static"/>
+            <xs:enumeration value="dynamic"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

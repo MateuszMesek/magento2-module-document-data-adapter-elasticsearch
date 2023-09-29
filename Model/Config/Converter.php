@@ -10,21 +10,39 @@ class Converter implements ConverterInterface
 {
     public function __construct(
         private readonly ItemsResolver      $itemsResolver,
-        private readonly ProcessorInterface $documentProcessor
+        private readonly ProcessorInterface $documentProcessor,
+        private readonly ProcessorInterface $indexSettingProcessor
     )
     {
     }
 
     public function convert($source): array
     {
-        $data = [];
+        $data = [
+            'document' => [],
+            'index' => [
+                'settings' => []
+            ]
+        ];
 
-        $items = $this->itemsResolver->resolve($source, 'document');
+        $documents = $this->itemsResolver->resolve($source, 'document');
 
-        foreach ($items as $item) {
-            $documentData = $this->documentProcessor->process($item);
+        foreach ($documents as $document) {
+            $documentData = $this->documentProcessor->process($document);
 
-            $data[$documentData['name']] = $documentData;
+            $data['document'][$documentData['name']] = $documentData;
+        }
+
+        $indexes = $this->itemsResolver->resolve($source, 'index');
+
+        foreach ($indexes as $index) {
+            $settings = $this->itemsResolver->resolve($index, 'setting');
+
+            foreach ($settings as $setting) {
+                $settingData = $this->indexSettingProcessor->process($setting);
+
+                $data['index']['settings'][$settingData['path']] = $settingData['type'];
+            }
         }
 
         return $data;

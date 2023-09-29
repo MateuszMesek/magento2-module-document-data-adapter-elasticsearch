@@ -20,7 +20,7 @@ class Config implements IndexNamePatternInterface
 
     public function getDocumentNodes(string $documentName): array
     {
-        $nodes = $this->data->get("$documentName/nodes");
+        $nodes = $this->data->get("document/$documentName/nodes");
 
         if (null === $nodes) {
             $nodes = [];
@@ -33,6 +33,23 @@ class Config implements IndexNamePatternInterface
                 return $node;
             },
             $nodes
+        );
+    }
+
+    public function getIndexSettings(): array
+    {
+        return $this->data->get('index/settings');
+    }
+
+    public function getIndexSettingPathsByType(string $type): array
+    {
+        return array_keys(
+            array_filter(
+                $this->getIndexSettings(),
+                static function (string $itemType) use ($type) {
+                    return $itemType === $type;
+                }
+            )
         );
     }
 

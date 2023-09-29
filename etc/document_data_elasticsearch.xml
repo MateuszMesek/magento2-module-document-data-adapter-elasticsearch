@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:MateuszMesek_DocumentDataAdapterElasticsearch:etc/document_data_elasticsearch.xsd">
+    <document name="catalog_product"/>
+    <index>
+        <setting path="index.number_of_shards" type="static"/>
+        <setting path="index.number_of_routing_shards" type="static"/>
+        <setting path="index.codec" type="static"/>
+        <setting path="index.routing_partition_size" type="static"/>
+        <setting path="index.soft_deletes.enabled" type="static"/>
+        <setting path="index.soft_deletes.retention_lease.period" type="static"/>
+        <setting path="index.load_fixed_bitset_filters_eagerly" type="static"/>
+        <setting path="index.shard.check_on_startup" type="static"/>
+        <setting path="index.number_of_replicas" type="dynamic"/>
+        <setting path="index.auto_expand_replicas" type="dynamic"/>
+        <setting path="index.search.idle.after" type="dynamic"/>
+        <setting path="index.refresh_interval" type="dynamic"/>
+        <setting path="index.max_result_window" type="dynamic"/>
+        <setting path="index.max_inner_result_window" type="dynamic"/>
+        <setting path="index.max_rescore_window" type="dynamic"/>
+        <setting path="index.max_docvalue_fields_search" type="dynamic"/>
+        <setting path="index.max_script_fields" type="dynamic"/>
+        <setting path="index.max_ngram_diff" type="dynamic"/>
+        <setting path="index.max_shingle_diff" type="dynamic"/>
+        <setting path="index.max_refresh_listeners" type="dynamic"/>
+        <setting path="index.analyze.max_token_count" type="dynamic"/>
+        <setting path="index.highlight.max_analyzed_offset" type="dynamic"/>
+        <setting path="index.max_terms_count" type="dynamic"/>
+        <setting path="index.max_regex_length" type="dynamic"/>
+        <setting path="index.query.default_field" type="dynamic"/>
+        <setting path="index.routing.allocation.enable" type="dynamic"/>
+        <setting path="index.routing.rebalance.enable" type="dynamic"/>
+        <setting path="index.gc_deletes" type="dynamic"/>
+        <setting path="index.default_pipeline" type="dynamic"/>
+        <setting path="index.final_pipeline" type="dynamic"/>
+        <setting path="index.hidden" type="dynamic"/>
+        <setting path="index.analysis" type="static"/>
+        <setting path="index.mapping.total_fields.limit" type="dynamic"/>
+        <setting path="index.mapping.depth.limit" type="dynamic"/>
+        <setting path="index.mapping.nested_fields.limit" type="dynamic"/>
+        <setting path="index.mapping.nested_objects.limit" type="dynamic"/>
+        <setting path="index.mapping.field_name_length.limit" type="dynamic"/>
+        <setting path="index.mapping.dimension_fields.limit" type="dynamic"/>
+    </index>
+</config>

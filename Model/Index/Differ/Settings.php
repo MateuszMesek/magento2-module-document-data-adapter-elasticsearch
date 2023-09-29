@@ -3,21 +3,19 @@
 namespace MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ;
 
 use Magento\Framework\Stdlib\ArrayManager;
+use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config;
 
 class Settings implements DifferInterface
 {
     private const SETTINGS_PATH = 'settings';
-    private array $paths;
 
     public function __construct(
         private readonly ArrayManager $arrayManager,
-                                      $paths = [],
-        private                       $result = self::NONE
+        private readonly Config       $config,
+        private readonly string       $type,
+        private readonly int          $result = self::NONE
     )
     {
-        $this->paths = array_keys(
-            array_filter($paths)
-        );
     }
 
     public function check(array $new, array $current): int
@@ -25,12 +23,14 @@ class Settings implements DifferInterface
         $newSettings = $this->arrayManager->get(self::SETTINGS_PATH, $new, []);
         $currentSettings = $this->arrayManager->get(self::SETTINGS_PATH, $current, []);
 
-        foreach ($this->paths as $path) {
+        $paths = $this->config->getIndexSettingPathsByType($this->type);
+
+        foreach ($paths as $path) {
             $newValue = $this->prepareValue(
-                $this->arrayManager->get($path, $newSettings)
+                $this->arrayManager->get($path, $newSettings, delimiter: '.')
             );
             $currentValue = $this->prepareValue(
-                $this->arrayManager->get($path, $currentSettings)
+                $this->arrayManager->get($path, $currentSettings, delimiter: '.')
             );
 
             if ($newValue === $currentValue) {

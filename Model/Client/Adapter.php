@@ -70,8 +70,6 @@ class Adapter
         $indies = $this->getClient()->indices();
 
         if (!empty($body['settings'])) {
-            unset($body['settings']['index']['analysis']);
-
             $indies->putSettings([
                 'index' => $indexName,
                 'body' => $body['settings']
@@ -84,6 +82,13 @@ class Adapter
                 'body' => $body['mappings']
             ]);
         }
+    }
+
+    public function closeIndex(string $indexName): void
+    {
+        $this->getClient()->indices()->close([
+            'index' => $indexName
+        ]);
     }
 
     public function existsIndex(string $indexName): bool
@@ -166,7 +171,7 @@ class Adapter
         $this->bulkQuery($bulkDeleteDocuments);
     }
 
-    protected function getBulkQuery(
+    private function getBulkQuery(
         $indexName,
         $documents,
         $action

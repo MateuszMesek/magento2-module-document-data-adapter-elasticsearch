@@ -4,6 +4,7 @@ namespace MateuszMesek\DocumentDataAdapterElasticsearch\Model;
 
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Client\Adapter;
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Builder\BuilderInterface;
+use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Cleaner\CleanerInterface;
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Index\Differ\DifferInterface;
 use MateuszMesek\DocumentDataIndexIndexerApi\Model\IndexNameResolverInterface;
 use MateuszMesek\DocumentDataIndexIndexerApi\Model\IndexStructureBuilderInterface;
@@ -14,7 +15,9 @@ class IndexStructureBuilder implements IndexStructureBuilderInterface
         private readonly IndexNameResolverInterface $indexNameResolver,
         private readonly BuilderInterface           $builder,
         private readonly DifferInterface            $differ,
-        private readonly Adapter                    $adapter
+        private readonly CleanerInterface           $cleaner,
+        private readonly Adapter                    $adapter,
+
     )
     {
     }
@@ -45,13 +48,13 @@ class IndexStructureBuilder implements IndexStructureBuilderInterface
 
     private function update(string $indexName, array $body): void
     {
+        $body = $this->cleaner->clean($body);
+
         $this->adapter->updateIndexBody($indexName, $body);
     }
 
     private function create(string $aliasName, array $body): void
     {
-        $client = $this->adapter->getClient();
-
         $currentIndexName = $this->adapter->getIndexNameByAlias($aliasName);
         $newIndexName = $this->findNewIndexName($aliasName);
 
@@ -64,9 +67,7 @@ class IndexStructureBuilder implements IndexStructureBuilderInterface
         $this->adapter->updateAlias($aliasName, $newIndexName);
 
         if ($currentIndexName) {
-            $client->indices()->close([
-                'index' => $currentIndexName
-            ]);
+            $this->adapter->closeIndex($currentIndexName);
         }
     }
 
