@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:MateuszMesek_DocumentDataAdapterElasticsearch:etc/document_data_elasticsearch.xsd">
-    <document name="catalog_product"/>
     <index>
         <setting path="index.number_of_shards" type="static"/>
         <setting path="index.number_of_routing_shards" type="static"/>
