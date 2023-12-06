@@ -4,6 +4,7 @@ namespace MateuszMesek\DocumentDataAdapterElasticsearch\Model\Client;
 
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\BadRequest400Exception;
+use Elasticsearch\Common\Exceptions\InvalidArgumentException;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
 use MateuszMesek\DocumentDataAdapterElasticsearch\Model\Config;
@@ -207,7 +208,47 @@ class Adapter
 
     private function bulkQuery(array $query): void
     {
-        $this->getClient()->bulk($query);
+        $response = $this->getClient()->bulk($query);
+
+        if (!$response['errors']) {
+            return;
+        }
+
+        $items = array_map(
+            static function (array $item) {
+                return $item['index'];
+            },
+            $response['items']
+        );
+
+        $this->handleBrokenItem($items);
+    }
+
+    private function handleBrokenItem(array $items): void
+    {
+        $brokenItems = array_filter(
+            $items,
+            static function (array $item) {
+                return !empty($item['error']);
+            }
+        );
+
+        $brokenItem = reset($brokenItems);
+
+        $documentId = $brokenItem['_id'];
+        $type = $brokenItem['error']['caused_by']['type'];
+        $reason = $brokenItem['error']['caused_by']['reason'];
+
+        $message = sprintf(
+            'Can\'t save document (#%s) to ElasticSearch (%s)',
+            $documentId,
+            $reason
+        );
+
+        throw match ($type) {
+            'illegal_argument_exception' => new InvalidArgumentException($message),
+            default => new BadRequest400Exception($message),
+        };
     }
 
     public function getDocuments(string $indexName, array $body): Traversable
