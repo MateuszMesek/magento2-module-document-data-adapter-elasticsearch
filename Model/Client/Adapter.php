@@ -236,16 +236,19 @@ class Adapter
         $brokenItem = reset($brokenItems);
 
         $documentId = $brokenItem['_id'];
-        $type = $brokenItem['error']['caused_by']['type'];
-        $reason = $brokenItem['error']['caused_by']['reason'];
+        $error = $brokenItem['error'];
+
+        if (array_key_exists('caused_by', $error)) {
+            $error = $error['caused_by'];
+        }
 
         $message = sprintf(
             'Can\'t save document (#%s) to ElasticSearch (%s)',
             $documentId,
-            $reason
+            $error['reason']
         );
 
-        throw match ($type) {
+        throw match ($error['type']) {
             'illegal_argument_exception' => new InvalidArgumentException($message),
             default => new BadRequest400Exception($message),
         };
